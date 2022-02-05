@@ -1,0 +1,21 @@
+@import "./fonts.css";
+
+/* width */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #6e6e6e00;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: rgb(62, 75, 92);
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(64, 81, 104);
+}
