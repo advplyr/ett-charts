@@ -1,5 +1,11 @@
 <template>
   <div class="w-full h-full">
+    <div class="absolute top-0 right-0 px-8 py-6 z-50">
+      <a href="https://github.com/advplyr/ett-charts" target="_blank">
+        <img src="/images/github.png" class="w-12 h-12" />
+      </a>
+    </div>
+
     <div class="absolute top-0 left-0 h-full flex items-center justify-end w-2/5">
       <div class="max-w-md">
         <h1 class="font-coda font-extrabold italic text-6xl mb-8">ETT <span class="text-red-600">CHARTS</span></h1>
