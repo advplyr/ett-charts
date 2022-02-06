@@ -13,7 +13,7 @@
       </div>
     </div>
     <div ref="scroll" class="flex justify-end lg:h-full mx-auto px-8 py-0 pb-8 lg:p-24 overflow-y-auto">
-      <div class="lg:h-full w-full max-w-full lg:w-2/5 lg:min-w-md">
+      <div class="h-full w-full max-w-full lg:w-2/5 lg:min-w-md">
         <leaderboard :load="getLeaderboard" :search-results="searchResults" />
       </div>
     </div>

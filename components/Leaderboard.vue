@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full mx-auto lg:mx-0 max-w-sm md:max-w-md md:min-h-full relative">
+  <div class="w-full mx-auto lg:mx-0 max-w-sm md:max-w-md md:min-h-full relative pb-6">
     <div v-if="!leaderboard.length && loading" class="w-full h-full flex items-center justify-center absolute top-0 right-0">
       <loading-indicator class="w-32 h-32" />
     </div>
@@ -9,7 +9,7 @@
       <div class="flex-grow" />
       <p class="item-elo text-sm md:text-base font-oswald text-gray-500">{{ user.score }}</p>
     </nuxt-link>
-    <div id="bottomscroll" class="w-full h-2 mt-4 bg-white bg-opacity-10" />
+    <div id="bottomscroll" class="w-full h-2 my-4 bg-white bg-opacity-10" />
   </div>
 </template>
 
