@@ -9,7 +9,7 @@
       <div class="flex-grow" />
       <p class="item-elo text-sm md:text-base font-oswald text-gray-500">{{ user.score }}</p>
     </nuxt-link>
-    <div id="bottomscroll" class="w-full h-8 mb-4 mt-4 bg-white bg-opacity-10" />
+    <div id="bottomscroll" class="w-full h-2 mb-10 mt-4 bg-white bg-opacity-10" />
   </div>
 </template>
 
