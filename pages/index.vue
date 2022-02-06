@@ -58,7 +58,6 @@ export default {
       var height = this.$refs.usersearch.clientHeight
       if (window.innerWidth < 1024) {
         this.$refs.scroll.style.height = window.innerHeight - height + 'px'
-        console.log('Set height', this.$refs.scroll.style.height)
       } else {
         this.$refs.scroll.style.height = '100%'
       }
