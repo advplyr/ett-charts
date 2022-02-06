@@ -1,13 +1,13 @@
 <template>
-  <div class="w-full max-w-md min-h-full relative">
+  <div class="w-full mx-auto lg:mx-0 max-w-sm md:max-w-md md:min-h-full relative">
     <div v-if="!leaderboard.length && loading" class="w-full h-full flex items-center justify-center absolute top-0 right-0">
       <loading-indicator class="w-32 h-32" />
     </div>
     <nuxt-link v-for="user in items" :key="user.id" :to="`/${user.id || user.username}`" class="leaderboard-item flex items-center p-2 cursor-pointer">
-      <p class="item-rank text-lg font-oswald w-20 text-red-500">#{{ user.rank }}</p>
-      <p class="item-username text-lg font-oswald">{{ user.username }}</p>
+      <p class="item-rank text-base md:text-lg font-oswald w-20 text-red-500">#{{ user.rank }}</p>
+      <p class="item-username text-base md:text-lg font-oswald">{{ user.username }}</p>
       <div class="flex-grow" />
-      <p class="item-elo text-base font-oswald text-gray-500">{{ user.score }}</p>
+      <p class="item-elo text-sm md:text-base font-oswald text-gray-500">{{ user.score }}</p>
     </nuxt-link>
     <div id="bottomscroll" class="w-full h-12 mt-4 bg-transparent" />
   </div>

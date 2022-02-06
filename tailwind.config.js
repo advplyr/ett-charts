@@ -9,6 +9,9 @@ module.exports = {
       fontFamily: {
         coda: ['Coda'],
         oswald: ['Oswald'],
+      },
+      minWidth: {
+        'md': '28rem'
       }
     },
     // fontFamily: {
