@@ -1,6 +1,6 @@
 <template>
-  <div v-if="matches.length" class="w-full max-w-full lg:max-w-4xl mx-auto py-12 px-0 sm:px-6">
-    <p class="font-oswald text-xs sm:text-sm font-semibold text-white text-opacity-40 uppercase">Latest Ranked Matches</p>
+  <div v-if="matches.length" class="w-full max-w-full lg:max-w-4xl mx-auto pb-12 px-0 sm:px-6">
+    <p class="font-oswald text-xs sm:text-sm font-semibold text-white text-opacity-40 uppercase">{{ title }}</p>
 
     <div v-for="match in matches" :key="match.id" class="flex py-4">
       <div class="w-12 flex justify-end pr-4">
@@ -16,7 +16,7 @@
         <p v-if="match.rounds[index - 1]" class="font-oswald text-xs sm:text-sm text-gray-400">{{ match.rounds[index - 1].userScore }}/{{ match.rounds[index - 1].opponentScore }}</p>
       </div>
       <div class="flex-grow" />
-      <p class="font-oswald font-light italic text-gray-400 text-xs">played {{ match.createdAtDistance }} ago</p>
+      <p class="font-oswald font-light italic text-gray-400 text-xs">{{ useRelativeDate ? match.createdAtRelative : match.createdAtPretty }}</p>
     </div>
   </div>
   <div v-else class="my-24">
@@ -27,10 +27,15 @@
 <script>
 export default {
   props: {
+    title: {
+      type: String,
+      default: 'Latest Ranked Matches'
+    },
     matches: {
       type: Array,
       default: () => []
-    }
+    },
+    useRelativeDate: Boolean
   },
   data() {
     return {}

@@ -11,7 +11,7 @@
         <div class="flex-grow" />
       </div>
 
-      <div v-if="user" class="mt-4 max-w-4xl mx-auto flex flex-wrap items-center justify-between">
+      <div v-if="user" class="mt-4 mb-12 max-w-4xl mx-auto flex flex-wrap items-center justify-between">
         <div class="p-2 py-4 sm:p-4 md:p-6 w-1/2 sm:w-auto text-center sm:text-left">
           <p class="font-oswald text-xs md:text-sm font-semibold text-white text-opacity-40 uppercase">Rank</p>
           <p class="font-oswald font-black text-4xl md:text-5xl tracking-tighter text-white">#{{ user.rank }}</p>
@@ -35,14 +35,20 @@
         </div>
       </div>
 
-      <matches-table :matches="matches" />
-
-      <div v-if="matches.length && !isMdAndBelow" class="w-full max-w-4xl mx-auto" style="height: 250px">
+      <div v-if="userMatches.length && !isMdAndBelow" class="w-full max-w-4xl mx-auto" style="height: 250px">
         <p class="font-oswald text-sm font-semibold text-white text-opacity-40 uppercase px-6">Ranked Matches {{ currentYear - 1 }} - {{ currentYear }}</p>
 
-        <match-heatmap :elo-history-by-date="eloHistoryByDate" class="-mt-2" />
+        <match-heatmap :elo-history-by-date="eloHistoryByDate" class="-mt-2" @selectDate="selectDate" />
       </div>
-      <div v-if="matches.length && !isMdAndBelow" class="w-full max-w-4xl mx-auto" style="height: 400px">
+
+      <div class="relative">
+        <matches-table v-if="!loadingMatches" :title="matchesTableTitle" :matches="matchesTableMatches" :use-relative-date="!selectedDate" />
+        <div v-else class="h-56 flex items-center justify-center">
+          <loading-indicator class="w-32 h-32" />
+        </div>
+      </div>
+
+      <div v-if="userMatches.length && !isMdAndBelow" class="w-full max-w-4xl mx-auto" style="height: 400px">
         <win-loss-chart :elo-history-by-date="eloHistoryByDate" :lowest-elo="lowestELO" />
       </div>
     </template>
@@ -59,14 +65,18 @@ export default {
   mixins: [apiMixin],
   asyncData({ params }) {
     return {
-      userIdParam: params.id
+      userIdParam: params.id,
+      selectedDate: null,
+      selectedJsDate: null,
+      matchesForDate: []
     }
   },
   data() {
     return {
       user: null,
       loading: true,
-      isMdAndBelow: false
+      isMdAndBelow: false,
+      loadingMatches: false
     }
   },
   computed: {
@@ -79,9 +89,6 @@ export default {
     lastOnline() {
       return this.user ? this.user['last-online'] : null
     },
-    matches() {
-      return this.userMatches ? this.userMatches.matches || [] : []
-    },
     lastOnlineDistance() {
       if (!this.lastOnline) return ''
       var lod = new Date(this.lastOnline)
@@ -89,9 +96,44 @@ export default {
     },
     currentYear() {
       return new Date().getFullYear()
+    },
+    matchesTableTitle() {
+      if (!this.selectedDate) return 'Latest Ranked Matches'
+      var datePretty = this.$formatDate(this.selectedJsDate, 'MMM d yyyy')
+      return `Matches on ${datePretty}`
+    },
+    matchesTableMatches() {
+      if (!this.selectedDate) return this.userMatches.slice(0, 10)
+      return this.matchesForDate || []
     }
   },
   methods: {
+    selectDate(jsdate) {
+      if (this.loadingMatches) {
+        console.warn('Already loading matches')
+        return
+      }
+      this.selectedDate = null
+      this.selectedJsDate = jsdate
+      this.loadMatchesForDate(this.$formatDate(jsdate))
+    },
+    async loadMatchesForDate(date) {
+      var latestUserMatch = this.userMatches[this.userMatches.length - 1]
+      if (latestUserMatch) {
+        this.loadingMatches = true
+        if (latestUserMatch.date < date) {
+          this.selectedDate = date
+          this.matchesForDate = this.userMatches.filter((m) => m.date === date)
+          this.loadingMatches = false
+        } else if (this.nextUserMatchUrl) {
+          await this.loadNextMatches()
+          this.loadMatchesForDate(date)
+        } else {
+          console.error('Cannot load more matches')
+          this.loadingMatches = false
+        }
+      }
+    },
     async checkUser() {
       var user = await this.getUserData(this.userIdParam)
       if (!user) {

@@ -5,7 +5,8 @@ export default {
       eloHistoryByDate: null,
       highestELO: 0,
       lowestELO: 0,
-      userMatches: null
+      userMatches: [],
+      nextUserMatchUrl: null
     }
   },
   methods: {
@@ -38,9 +39,22 @@ export default {
         this.groupEloHistory()
       }
     },
-    async setUserMatches() {
-      this.userMatches = await this.getUserMatches(true)
-      // console.log('SET User Matches', this.userMatches)
+    async setUserMatches(ranked = true) {
+      var append = ranked ? '/ranked' : ''
+      var url = `https://www.elevenvr.club/accounts/${this.userId}/matches${append}`
+      var data = await this.getUserMatches(url)
+      if (data) {
+        this.userMatches = this.userMatches.concat(data.matches || [])
+        this.nextUserMatchUrl = data.links.next
+      }
+    },
+    async loadNextMatches() {
+      if (!this.nextUserMatchUrl) return
+      var data = await this.getUserMatches(this.nextUserMatchUrl)
+      if (data) {
+        this.userMatches = this.userMatches.concat(data.matches || [])
+        this.nextUserMatchUrl = data.links.next
+      }
     },
     getUserData(userId) {
       return this.$axios.$get(`https://www.elevenvr.club/accounts/${userId}`).then((res) => {
@@ -117,13 +131,15 @@ export default {
       match.won = attributes.winner === userTeamIndex
 
       var startedAt = new Date(match.createdAt)
+      match.date = this.$formatDate(startedAt)
       match.createdAtDistance = this.$formatDateDistance(startedAt)
+      match.createdAtRelative = this.$formatDateRelative(startedAt)
+      match.createdAtPretty = this.$formatDate(startedAt, 'MMM d yyyy hh:mm a')
 
       return match
     },
-    getUserMatches(ranked = false) {
-      var append = ranked ? '/ranked' : ''
-      return this.$axios.$get(`https://www.elevenvr.club/accounts/${this.userId}/matches${append}`).then((res) => {
+    getUserMatches(url) {
+      return this.$axios.$get(url).then((res) => {
         // console.log('Fetched matches data', res)
         return {
           matches: res.data.map(d => this.cleanMatch(d, res.included)),

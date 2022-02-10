@@ -85,6 +85,11 @@ export default {
             filter: {
               type: 'none'
             }
+          },
+          active: {
+            filter: {
+              type: 'none'
+            }
           }
         }
       }
@@ -199,6 +204,19 @@ export default {
       var value = series[seriesIndex][dataPointIndex]
       var prettyDate = this.$formatDate(date, 'MMM d yyyy')
       return '<div class="arrow_box bg-gray-700 text-sm px-4 py-1">' + `${value} matches on ${prettyDate}` + '</div>'
+    }
+
+    this.options.chart.events = {
+      dataPointSelection: (event, chartContext, config) => {
+        var { seriesIndex, dataPointIndex } = config
+        var jsdate = this.series[seriesIndex].dates[dataPointIndex]
+        var value = this.series[seriesIndex].data[dataPointIndex]
+        if (value > 0) {
+          this.$emit('selectDate', jsdate)
+        }
+      }
+      // dataPointMouseEnter: (event, chartContext, config) => {},
+      // dataPointMouseLeave: (event, chartContext, config) => {}
     }
   }
 }
